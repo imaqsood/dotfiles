@@ -1,0 +1,17 @@
+Host github.com
+        HostName github.com
+        User git
+        IdentityFile ~/.ssh/git
+        IdentitiesOnly yes
+
+Host bitbucket.com
+        HostName bitbucket.com
+        User git
+        IdentityFile ~/.ssh/git
+        IdentitiesOnly yes
+Host *
+        IdentityFile ~/.ssh/id_rsa
+        Protocol 2
+        ServerAliveInterval 60
+        ServerAliveCountMax 20
+        LogLevel INFO
