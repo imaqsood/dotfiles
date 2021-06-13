@@ -7,6 +7,8 @@ ZSH_THEME="spaceship"
 plugins=(
 	git
 	tmux
+  docker
+  docker-compose
 	zsh-syntax-highlighting
 	zsh-autosuggestions
   zsh-256color
