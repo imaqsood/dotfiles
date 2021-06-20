@@ -12,7 +12,9 @@ zsh  \
 apt-transport-https \
 ca-certificates \
 gnupg \
-lsb-release
+lsb-release \
+fonts-firacode \
+mlocate
 
 # zsh
 sudo apt-get install --assume-yes zsh
@@ -26,6 +28,13 @@ if [[ ! -d $HOME/.oh-my-zsh ]]; then
   cd $SCRIPT_DIR
 fi;
 ln -s $SCRIPT_DIR/zshrc $HOME/.zshrc -f
+
+# terminator
+if ! command -v terminator &> /dev/null; then
+  sudo apt-get install -y terminator
+  [[ ! -d $HOME/.config/terminator ]] && mkdir $HOME/.config/terminator
+  ln -s $SCRIPT_DIR/terminator_config $HOME/.config/terminator/config -f
+if
 
 # tmux
 sudo apt-get install --assume-yes tmux

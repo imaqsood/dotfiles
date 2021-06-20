@@ -1,0 +1,29 @@
+[global_config]
+  window_state = maximise
+  borderless = True
+  title_use_system_font = False
+  title_font = Monaco 9
+[keybindings]
+[profiles]
+  [[default]]
+    background_darkness = 0.95
+    background_type = transparent
+    cursor_color = "#fce94f"
+    cursor_color_fg = False
+    font = Monaco 10
+    show_titlebar = False
+    scrollbar_position = hidden
+    scrollback_infinite = True
+    login_shell = True
+    use_system_font = False
+[layouts]
+  [[default]]
+    [[[window0]]]
+      type = Window
+      parent = ""
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+      profile = default
+      command = tmux  -u new -A  -s maqsood
+[plugins]

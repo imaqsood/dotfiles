@@ -122,7 +122,7 @@ endfunction"}}}
 set hidden
 
 let g:LanguageClient_serverCommands = {
-    \ 'ruby': ['~/.rvm/gems/ruby-2.3.1/bin/solargraph', 'stdio'],
+    \ 'ruby': ['~/.rvm/gems/ruby-3.0.0/bin/solargraph', 'stdio'],
     \ }
 
 nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
