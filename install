@@ -90,6 +90,11 @@ if ! command -v node &> /dev/null; then
   sudo apt-get install -y nodejs
 fi
 
+# yarn
+if ! command -v yarn &> /dev/null; then
+  sudo npm install --global yarn
+fi
+
 # set inputrc
 ln -s $SCRIPT_DIR/inputrc $HOME/.inputrc -f
 ln -s $SCRIPT_DIR/editrc $HOME/.editrc -f
