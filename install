@@ -84,29 +84,39 @@ if ! command -v rvm &> /dev/null; then
   rvm use 3.0
 fi
 
-# docker
-sudo apt-get remove docker docker-engine docker.io containerd runc
-if [[ ! -f /usr/share/keyrings/docker-archive-keyring.gpg ]]; then
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+#node
+if ! command -v node &> /dev/null; then
+  curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+  sudo apt-get install -y nodejs
 fi
-[ ! -d /etc/apt/sources.list.d/docker.list ] && echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io --assume-yes
-sudo groupadd docker -f
-sudo usermod -aG docker $USER
-newgrp docker
-sudo systemctl enable docker.service > /dev/null
-sudo systemctl enable containerd.service > /dev/null
 
-# docker-compose
-if [[ ! -f /usr/local/bin/docker-compose ]]; then
-  sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-  sudo chmod +x /usr/local/bin/docker-compose
-fi
-if [[ ! -f /etc/bash_completion.d/docker-compose ]]; then
-  sudo curl \
-      -L https://raw.githubusercontent.com/docker/compose/1.29.2/contrib/completion/bash/docker-compose \
-      -o /etc/bash_completion.d/docker-compose
-fi
+# set inputrc
+ln -s $SCRIPT_DIR/inputrc $HOME/.inputrc -f
+ln -s $SCRIPT_DIR/editrc $HOME/.editrc -f
+
+# # docker
+# sudo apt-get remove docker docker-engine docker.io containerd runc
+# if [[ ! -f /usr/share/keyrings/docker-archive-keyring.gpg ]]; then
+#   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+# fi
+# [ ! -d /etc/apt/sources.list.d/docker.list ] && echo \
+#   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+#   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# sudo apt-get update
+# sudo apt-get install docker-ce docker-ce-cli containerd.io --assume-yes
+# sudo groupadd docker -f
+# sudo usermod -aG docker $USER
+# newgrp docker
+# sudo systemctl enable docker.service > /dev/null
+# sudo systemctl enable containerd.service > /dev/null
+
+# # docker-compose
+# if [[ ! -f /usr/local/bin/docker-compose ]]; then
+#   sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#   sudo chmod +x /usr/local/bin/docker-compose
+# fi
+# if [[ ! -f /etc/bash_completion.d/docker-compose ]]; then
+#   sudo curl \
+#       -L https://raw.githubusercontent.com/docker/compose/1.29.2/contrib/completion/bash/docker-compose \
+#       -o /etc/bash_completion.d/docker-compose
+# fi
