@@ -17,7 +17,9 @@ fonts-firacode \
 mlocate \
 net-tools \
 openssh-server \
-htop
+htop \
+fd-find \
+silversearcher-ag
 
 # zsh
 sudo apt-get install --assume-yes zsh
