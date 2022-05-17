@@ -1,0 +1,76 @@
+#!/bin/bash
+
+export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" 
+
+ln -s "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/spaceship-prompt/spaceship.zsh-theme" "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/spaceship.zsh-theme"
+ln -s $SCRIPT_DIR/zshrc $HOME/.zshrc -f
+ln -s $SCRIPT_DIR/tmux.conf $HOME/.tmux.conf
+ln -s $SCRIPT_DIR/ssh_config $HOME/.ssh/config -f
+ln -s $SCRIPT_DIR/vimrc $HOME/.config/nvim/init.vim -f
+ln -s $SCRIPT_DIR/vimrc $HOME/.vimrc -f
+ln -s $SCRIPT_DIR/inputrc $HOME/.inputrc -f
+ln -s $SCRIPT_DIR/editrc $HOME/.editrc -f
+
+cp .tmux/.tmux.conf.local $HOME
+
+echo -ne '\n' |  vim +PluginInstall +qall
+
+$HOME/.fzf/install --all
+
+# github cli
+# if [[ ! -f /usr/share/keyrings/githubcli-archive-keyring.gpg ]]; then
+#   curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
+# fi
+# [ ! -d /etc/apt/sources.list.d/github-cli.list ] && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+# sudo apt update
+# sudo apt install gh
+
+#rvm
+# if ! command -v rvm &> /dev/null; then
+#   gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+#   curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+#   curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
+#   curl -sSL https://get.rvm.io | bash -s stable
+#   rvm install 3.0
+#   rvm use 3.0
+# fi
+
+#node
+# if ! command -v node &> /dev/null; then
+#   curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+#   sudo apt-get install -y nodejs
+# fi
+
+# yarn
+# if ! command -v yarn &> /dev/null; then
+#   sudo npm install --global yarn
+# fi
+
+# set inputrc
+
+# # docker
+# sudo apt-get remove docker docker-engine docker.io containerd runc
+# if [[ ! -f /usr/share/keyrings/docker-archive-keyring.gpg ]]; then
+#   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+# fi
+# [ ! -d /etc/apt/sources.list.d/docker.list ] && echo \
+#   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+#   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# sudo apt-get update
+# sudo apt-get install docker-ce docker-ce-cli containerd.io --assume-yes
+# sudo groupadd docker -f
+# sudo usermod -aG docker $USER
+# newgrp docker
+# sudo systemctl enable docker.service > /dev/null
+# sudo systemctl enable containerd.service > /dev/null
+
+# # docker-compose
+# if [[ ! -f /usr/local/bin/docker-compose ]]; then
+#   sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#   sudo chmod +x /usr/local/bin/docker-compose
+# fi
+# if [[ ! -f /etc/bash_completion.d/docker-compose ]]; then
+#   sudo curl \
+#       -L https://raw.githubusercontent.com/docker/compose/1.29.2/contrib/completion/bash/docker-compose \
+#       -o /etc/bash_completion.d/docker-compose
+# fi

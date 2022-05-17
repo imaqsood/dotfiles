@@ -19,7 +19,8 @@ net-tools \
 openssh-server \
 htop \
 fd-find \
-silversearcher-ag
+silversearcher-ag \
+ripgrep
 
 # zsh
 sudo apt-get install --assume-yes zsh
