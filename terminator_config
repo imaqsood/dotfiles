@@ -16,7 +16,6 @@
     scrollbar_position = hidden
     scrollback_infinite = True
     login_shell = True
-    use_system_font = False
 [layouts]
   [[default]]
     [[[window0]]]
