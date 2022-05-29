@@ -53,7 +53,7 @@ Plugin 'autozimu/LanguageClient-neovim', {
         \ }
 Plugin 'kana/vim-textobj-user'
 Plugin 'nelstrom/vim-textobj-rubyblock'
-" Auto-fold files upon open. Disable session-wide with: <leader>nf
+" Auto-folg files upon open. Disable session-wide with: <leader>nf
 Plugin 'bruno-/vim-ruby-fold'
 if has('nvim')
   Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -138,7 +138,7 @@ set statusline+=%=
 set statusline+=\ %{LinterStatus()}
 
 nnoremap <C-p> :Files<Cr>
-nnoremap <C-/> :Ag<Space>
+nnoremap <C-f> :Ag<Space>
 nnoremap <C-Space> :Buffers<Cr>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":FZF\<cr>"
 nnoremap tn :tabnew<Space>

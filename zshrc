@@ -1,5 +1,6 @@
 export ZSH=$HOME/.oh-my-zsh
 export DOTFILES=$HOME/maqdotfiles
+export FZF_DEFAULT_COMMAND="find . -path '*/\.*' -type d -prune -o -type f -print -o -type l -print 2> /dev/null | sed s/^..//"
 
 ZSH_THEME="robbyrussell"
 ZSH_THEME="spaceship"
