@@ -139,9 +139,9 @@ function! s:check_back_space() abort "{{{
 endfunction"}}}
 
 set hidden
-
+let g:LanguageClient_autoStart = 1
 let g:LanguageClient_serverCommands = {
-    \ 'ruby': ['~/.rvm/gems/ruby-3.0.0/bin/solargraph', 'stdio'],
+    \  'ruby': ['~/.rbenv/shims/solargraph', 'stdio']
     \ }
 
 nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
