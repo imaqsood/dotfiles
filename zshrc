@@ -1,6 +1,8 @@
 export ZSH=$HOME/.oh-my-zsh
 export DOTFILES=$HOME/maqdotfiles
 export FZF_DEFAULT_COMMAND="find . -path '*/\.*' -type d -prune -o -type f -print -o -type l -print 2> /dev/null | sed s/^..//"
+export ZPLUG_HOME=$HOME/.zplug
+
 
 ZSH_THEME="robbyrussell"
 ZSH_THEME="spaceship"
@@ -15,6 +17,7 @@ plugins=(
   zsh-256color
 )
 
+source $HOME/.zplug/init.zsh
 source $ZSH/oh-my-zsh.sh
 bindkey -v
 
@@ -33,3 +36,4 @@ if [[ -d $HOME/.pyenv ]]; then
 	eval "$(pyenv init -)"
 	eval "$(pyenv virtualenv-init -)"
 fi
+eval "$(rbenv init - zsh)"
