@@ -53,6 +53,8 @@ Plugin 'kana/vim-textobj-user'
 Plugin 'nelstrom/vim-textobj-rubyblock'
 " Auto-folg files upon open. Disable session-wide with: <leader>nf
 Plugin 'bruno-/vim-ruby-fold'
+Plugin 'vimwiki/vimwiki'
+Plugin 'ryanoasis/vim-devicons'
 if has('nvim')
   Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
@@ -77,7 +79,10 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
-"autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | exe "normal! \<c-w>\<c-w>" | endif
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+au BufEnter * if bufname('#') =~ 'NERD_tree' && bufname('%') !~ 'NERD_tree' && winnr('$') > 1 | b# | exe "normal! \<c-w>\<c-w>" | :blast | endif
+nnoremap <C-\> :NERDTreeFind %<CR> <c-w><c-w>
 
 
 let ruby_operators        = 1
@@ -106,12 +111,12 @@ let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let g:ale_set_highlights = 0
 let g:ale_linters = {
-      \   'ruby': ['standardrb', 'rubocop'],
+      \   'ruby': ['rubocop'],
       \   'python': ['flake8', 'pylint'],
       \   'javascript': ['eslint'],
       \}
 let g:ale_fixers = {
-      \    'ruby': ['standardrb'],
+      \    'ruby': ['rubocop'],
       \}
 let g:ale_fix_on_save = 0
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
@@ -156,6 +161,7 @@ set statusline+=\ %f
 set statusline+=%=
 set statusline+=\ %{LinterStatus()}
 
+nnoremap <C-Space> :Buffers<Cr>
 nnoremap <C-p> :Files!<Cr>
 nnoremap <C-f> :Ag!<Space>
 nnoremap <C-Space> :Buffers<Cr>
@@ -185,8 +191,8 @@ autocmd BufNewFile,BufRead *.haml setl foldmethod=indent nofoldenable
 autocmd! FileType nofile setl foldmethod=indent nofoldenable
 
 " Space to toggle folds.
-" nnoremap <Space> za
-" vnoremap <Space> za
+nnoremap <Space> za
+vnoremap <Space> za
 
 " Toggles folds being enabled for this vim session
 function! FoldToggle()
