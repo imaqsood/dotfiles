@@ -1,10 +1,11 @@
+" DEFAULT PLUGINS
 runtime macros/matchit.vim
+
+" DEFAULT SETTINGS
 set nocompatible
 set number
-set rtp+=~/.vim/bundle/Vundle.vim
 set clipboard=unnamedplus
 set path+=**
-
 set shiftwidth=2
 set tabstop=2
 set expandtab
@@ -13,65 +14,70 @@ set smartindent
 set cindent
 set re=1
 set hidden
-
-
-call vundle#begin()
-
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'idanarye/vim-merginal'
-Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-Plugin 'scrooloose/nerdtree'
-Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plugin 'junegunn/fzf.vim'
-Plugin 'sickill/vim-monokai'
-Plugin 'sainnhe/gruvbox-material'
-Plugin 'sainnhe/sonokai'
-Plugin 'morhetz/gruvbox'
-Plugin 'godlygeek/tabular'
-"Plugin 'SirVer/ultisnips'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'slim-template/vim-slim.git'
-Plugin 'chiel92/vim-autoformat'
-"Plugin 'davydovanton/vim-html2slim'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-bundler'
-Plugin 'tpope/vim-rake'
-Plugin 'tpope/vim-endwise'
-Plugin 'tpope/vim-dadbod'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-sensible'
-Plugin 'tpope/vim-unimpaired'
-Plugin 'dense-analysis/ale'
-Plugin 'Yggdroot/indentLine'
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'autozimu/LanguageClient-neovim'
-Plugin 'kana/vim-textobj-user'
-Plugin 'nelstrom/vim-textobj-rubyblock'
-" Auto-folg files upon open. Disable session-wide with: <leader>nf
-Plugin 'bruno-/vim-ruby-fold'
-Plugin 'vimwiki/vimwiki'
-Plugin 'ryanoasis/vim-devicons'
-Plugin 'loremipsum'
-Plugin 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-if has('nvim')
-  Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plugin 'Shougo/deoplete.nvim'
-  Plugin 'roxma/nvim-yarp'
-  Plugin 'roxma/vim-hug-neovim-rpc'
-endif
-
-
-call vundle#end()
-
 syntax enable
 filetype plugin indent on
+
+" PLUGINS
+" vim-plug installation
+" for vim:
+" curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+" for neovim
+" sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+"        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
+call plug#begin()
+Plug 'idanarye/vim-merginal'
+Plug 'rstacruz/sparkup', {'rtp': 'vim/'}
+Plug 'scrooloose/nerdtree'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/gv.vim'
+Plug 'sickill/vim-monokai'
+Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/sonokai'
+Plug 'morhetz/gruvbox'
+Plug 'godlygeek/tabular'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'airblade/vim-gitgutter'
+Plug 'chiel92/vim-autoformat'
+Plug 'slim-template/vim-slim'
+" Plug 'SirVer/ultisnips'
+" Plug 'davydovanton/vim-html2slim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'vim-ruby/vim-ruby'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-rails'
+Plug 'tpope/vim-bundler'
+Plug 'tpope/vim-rake'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-dadbod'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-unimpaired'
+Plug 'dense-analysis/ale'
+Plug 'Yggdroot/indentLine'
+Plug 'kchmck/vim-coffee-script'
+Plug 'autozimu/LanguageClient-neovim'
+Plug 'kana/vim-textobj-user'
+Plug 'nelstrom/vim-textobj-rubyblock'
+" Auto-folg files upon open. Disable session-wide with: <leader>nf
+Plug 'bruno-/vim-ruby-fold'
+Plug 'vimwiki/vimwiki'
+Plug 'ryanoasis/vim-devicons'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
+call plug#end()
+
 " colorscheme monokai
 colorscheme gruvbox-material
 
@@ -169,7 +175,7 @@ nnoremap <C-Space> :Buffers<Cr>
 nnoremap <C-p> :Files!<Cr>
 nnoremap <C-f> :Ag!<Space>
 nnoremap <C-Space> :Buffers<Cr>
-nnoremap <C-c> :Commits!<Cr>
+nnoremap <C-c> :GV<Cr>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":FZF\<cr>"
 nnoremap tn :tabnew<Space>
 nnoremap tk :tabnext<CR>
