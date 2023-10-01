@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  dev:
+    build:
+      context: .
+      args:
+        USER_ID: "${USER_ID:-1000}"
+        GROUP_ID: "${GROUP_ID:-1000}"
+    volumes:
+      - ../:/opt/dev
+    tty: true
+    stdin_open: true
+volumes:
+  dev_home:
