@@ -1,14 +1,19 @@
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
 
 export ZSH=$HOME/.oh-my-zsh
 export DOTFILES=$HOME/maqdotfiles
 export FZF_DEFAULT_COMMAND="find . -path '*/\.*' -type d -prune -o -type f -print -o -type l -print 2> /dev/null | sed s/^..//"
 export ZPLUG_HOME=$HOME/.zplug
-export ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# need to be loaded before theme and zplug
+source $ZSH/oh-my-zsh.sh
 
 bindkey -v
+
+export ZSH_THEME="powerlevel10k/powerlevel10k"
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 
 source $HOME/.zplug/init.zsh
 
@@ -18,10 +23,12 @@ zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "zsh-users/zsh-history-substring-search"
 zplug "chrissicool/zsh-256color"
 zplug "plugins/git",   from:oh-my-zsh
+zplug "plugins/git",   from:oh-my-zsh
 zplug "plugins/tmux",   from:oh-my-zsh
 zplug "plugins/docker",   from:oh-my-zsh
 zplug "plugins/fzf",   from:oh-my-zsh
 zplug "plugins/ruby",   from:oh-my-zsh
+# zplug "oh-my-zsh/lib",   from:oh-my-zsh
 zplug "plugins/docker-compose",   from:oh-my-zsh
 
 zplug load
