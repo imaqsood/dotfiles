@@ -32,7 +32,7 @@ RUN sudo apt-get remove --assume-yes 'vim*' && \
   htop fzf fd-find silversearcher-ag ripgrep tmux vim-athena \
   neovim nodejs yarn gnupg gnupg2 autoconf patch build-essential \
   rustc libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev \
-  libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev \
+  libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev fd
 
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
