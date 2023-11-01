@@ -28,7 +28,6 @@ zplug "plugins/tmux",   from:oh-my-zsh
 zplug "plugins/docker",   from:oh-my-zsh
 zplug "plugins/fzf",   from:oh-my-zsh
 zplug "plugins/ruby",   from:oh-my-zsh
-# zplug "oh-my-zsh/lib",   from:oh-my-zsh
 zplug "plugins/docker-compose",   from:oh-my-zsh
 
 zplug load
@@ -55,3 +54,4 @@ eval "$(rbenv init - zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"

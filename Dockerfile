@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM --platform=linux/amd64 ubuntu:latest
 
 ARG USER_ID
 ARG GROUP_ID
@@ -32,7 +32,7 @@ RUN sudo apt-get remove --assume-yes 'vim*' && \
   htop fzf fd-find silversearcher-ag ripgrep tmux vim-athena \
   neovim nodejs yarn gnupg gnupg2 autoconf patch build-essential \
   rustc libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev \
-  libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev fd
+  libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
 
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
@@ -50,9 +50,9 @@ RUN git clone https://github.com/spaceship-prompt/spaceship-prompt.git ${ZSH_CUS
     git clone https://github.com/imaqsood/dotfiles.git $HOME/dotfiles &&  \
     $HOME/.rbenv/plugins/ruby-build/install.sh
 
-RUN $HOME/.rbenv/bin/rbenv install 3.2.2
+# RUN $HOME/.rbenv/bin/rbenv install 3.2.2
 
-RUN echo -ne '\n' |  nvim +PlugInstall +qall
+# RUN echo -ne '\n' |  nvim +PlugInstall +qall
 
 RUN ln -sf ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/spaceship-prompt/spaceship.zsh-theme ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/spaceship.zsh-theme -f && \
     ln -sf $HOME/dotfiles/zshrc $HOME/.zshrc && \

@@ -8,6 +8,8 @@ services:
         GROUP_ID: "${GROUP_ID:-1000}"
     volumes:
       - ../:/opt/dev
+    ports:
+      - 443:4333
     tty: true
     stdin_open: true
 volumes:

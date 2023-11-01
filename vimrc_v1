@@ -15,7 +15,6 @@ set cindent
 set re=1
 set hidden
 syntax enable
-filetype plugin indent on
 
 " PLUGINS
 " vim-plug installation
@@ -26,49 +25,56 @@ filetype plugin indent on
 " sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
 "        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
-call plug#begin()
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('~/.vim/plugged')
+Plug 'hashivim/vim-terraform'
+Plug 'vim-ruby/vim-ruby'
+Plug 'SirVer/ultisnips'
+Plug 'Yggdroot/indentLine'
+Plug 'airblade/vim-gitgutter'
+Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
+Plug 'chiel92/vim-autoformat'
+" Plug 'davydovanton/vim-html2slim'
+Plug 'dense-analysis/ale'
+Plug 'godlygeek/tabular'
 Plug 'idanarye/vim-merginal'
-Plug 'rstacruz/sparkup', {'rtp': 'vim/'}
-Plug 'scrooloose/nerdtree'
+Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/gv.vim'
-Plug 'sickill/vim-monokai'
+Plug 'kana/vim-textobj-user'
+Plug 'kchmck/vim-coffee-script'
+Plug 'morhetz/gruvbox'
+Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'rstacruz/sparkup', {'rtp': 'vim/'}
+Plug 'ryanoasis/vim-devicons'
 Plug 'sainnhe/gruvbox-material'
 Plug 'sainnhe/sonokai'
-Plug 'morhetz/gruvbox'
-Plug 'godlygeek/tabular'
+Plug 'scrooloose/nerdtree'
+Plug 'sickill/vim-monokai'
+Plug 'slim-template/vim-slim'
+Plug 'tpope/vim-bundler'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dadbod'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rails'
+Plug 'tpope/vim-rake'
+Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'airblade/vim-gitgutter'
-Plug 'chiel92/vim-autoformat'
-Plug 'slim-template/vim-slim'
-" Plug 'SirVer/ultisnips'
-" Plug 'davydovanton/vim-html2slim'
-Plug 'jiangmiao/auto-pairs'
-Plug 'vim-ruby/vim-ruby'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-rails'
-Plug 'tpope/vim-bundler'
-Plug 'tpope/vim-rake'
-Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-dadbod'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-unimpaired'
-Plug 'dense-analysis/ale'
-Plug 'Yggdroot/indentLine'
-Plug 'kchmck/vim-coffee-script'
-Plug 'autozimu/LanguageClient-neovim'
-Plug 'kana/vim-textobj-user'
-Plug 'nelstrom/vim-textobj-rubyblock'
-" Auto-folg files upon open. Disable session-wide with: <leader>nf
-Plug 'bruno-/vim-ruby-fold'
+Plug 'vim-utils/vim-ruby-fold'
+Plug 'rlue/vim-fold-rspec'
 Plug 'vimwiki/vimwiki'
-Plug 'ryanoasis/vim-devicons'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'rodjek/vim-puppet'
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
@@ -183,12 +189,12 @@ nnoremap tj :tabprev<CR>
 nnoremap th :tabfirst<CR>
 nnoremap tl :tablast<CR>
 nnoremap gs :tab G<CR>
-nnoremap gb :G blame p<CR>
-vnoremap gb :G blame p<CR>
+nnoremap gb :G blame<CR>
+vnoremap gb :G blame<CR>
 nnoremap <F5> "=strftime("================== %c ==================")<CR>P
 inoremap <F5> <C-R>=strftime("================== %c ==================")<CR>
 
-"fold settings
+" fold settings
 " ------------
 " toggle folding with za.
 " fold everything with zM
@@ -222,3 +228,9 @@ function! FoldToggle()
 endfunc
 
 nnoremap <Leader>nf :call FoldToggle()<CR>
+
+augroup fugitive_ext
+  autocmd!
+  " Browse to the commit under my cursor
+  autocmd FileType fugitiveblame nnoremap <buffer> <localleader>gb :execute ":.Gbrowse )<cr>
+augroup END
