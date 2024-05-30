@@ -1,4 +1,3 @@
-
 export ZSH=$HOME/.oh-my-zsh
 export DOTFILES=$HOME/maqdotfiles
 export FZF_DEFAULT_COMMAND="find . -path '*/\.*' -type d -prune -o -type f -print -o -type l -print 2> /dev/null | sed s/^..//"
@@ -36,6 +35,7 @@ zplug load
 
 alias cop="git add -N .; git diff --name-only | xargs rubocop $@"
 alias ls="colorls"
+alias branches="for branch in \$(git branch --format='%(refname:short)' $@); do echo \"\$branch -> \$(git describe --tags --abbrev=0 \$branch)\"; done"
 
 # rvm
 if [[ -d $HOME/.rvm ]]; then
@@ -55,3 +55,13 @@ eval "$(rbenv init - zsh)"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+
+
+[[ ! -f ~/.env ]] || source ~/.env
+
+export PATH="$HOME/dev:$PATH"
+
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
+export GIT_EDITOR=nvim

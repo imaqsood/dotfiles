@@ -1,0 +1,16 @@
+#!/bin/bash
+
+script_dir=$(dirname "$(realpath "$0")")
+
+echo "$script_dir"
+
+ln -s ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/spaceship-prompt/spaceship.zsh-theme ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/spaceship.zsh-theme -f
+ln -s $script_dir/zshrc $HOME/.zshrc -f
+ln -s $script_dir/terminator_config $HOME/.config/terminator/config -f
+ln -s $HOME/.tmux/.tmux.conf $HOME/.tmux.conf -f
+ln -s $script_dir/ssh_config $HOME/.ssh/config -f
+ln -s $script_dir/vimrc $HOME/.config/nvim/init.vim -f
+ln -s $script_dir/vimrc $HOME/.vimrc -f
+ln -s $script_dir/inputrc $HOME/.inputrc -f
+ln -s $script_dir/editrc $HOME/.editrc -f
+
