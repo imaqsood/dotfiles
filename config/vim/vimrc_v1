@@ -14,7 +14,11 @@ set smartindent
 set cindent
 set re=1
 set hidden
+set colorcolumn=80
+filetype plugin on
 syntax enable
+
+
 
 " PLUGINS
 " vim-plug installation
@@ -31,7 +35,9 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+
 call plug#begin('~/.vim/plugged')
+Plug 'vifm/vifm.vim'
 Plug 'rodjek/vim-puppet'
 Plug 'hashivim/vim-terraform'
 Plug 'vim-ruby/vim-ruby'
@@ -76,7 +82,12 @@ Plug 'vim-utils/vim-ruby-fold'
 Plug 'rlue/vim-fold-rspec'
 Plug 'vimwiki/vimwiki'
 Plug 'mattn/emmet-vim'
+Plug 'github/copilot.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install --frozen-lockfile --production',
+  \ 'branch': 'release/0.x'
+  \ }
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
@@ -89,7 +100,30 @@ call plug#end()
 " colorscheme monokai
 colorscheme gruvbox-material
 
+
+" Background Transparent
+highlight Normal guibg=NONE ctermbg=NONE
+highlight NonText guibg=NONE ctermbg=NONE
+
+" Unfocused windows (like NERDTree)
+highlight NormalNC guibg=NONE ctermbg=NONE
+
+" Vertical split borders
+highlight VertSplit guibg=NONE ctermbg=NONE ctermfg=NONE guifg=NONE
+
+" End of buffer (tildes at bottom)
+highlight EndOfBuffer guibg=NONE ctermbg=NONE
+
+autocmd VimEnter,WinEnter,BufWinEnter * highlight Normal guibg=none ctermbg=none
+autocmd VimEnter,WinEnter,BufWinEnter * highlight NonText guibg=none ctermbg=none
+
 autocmd BufNewFile,BufRead *.slim set ft=slim
+" force .md file type to markdown
+autocmd BufRead,BufNewFile *.md set filetype=markdown
+" autocomplete for markdown
+autocmd FileType markdown setlocal omnifunc=syntaxcomplete#Complete
+" force mardown to open buffers
+autocmd FileType markdown nnoremap <buffer> <C-Space> :Buffers<CR>
 autocmd StdinReadPre * let s:std_in=1
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
@@ -97,17 +131,18 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | exe "normal! \<c-w>\<c-w>" | endif
+" autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | exe "normal! \<c-w>\<c-w>" | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 au BufEnter * if bufname('#') =~ 'NERD_tree' && bufname('%') !~ 'NERD_tree' && winnr('$') > 1 | b# | exe "normal! \<c-w>\<c-w>" | :blast | endif
 nnoremap <C-\> :NERDTreeFind %<CR> <c-w><c-w>
 
+command! -bang FilesHidden call fzf#vim#files('.', fzf#vim#with_preview({'source': 'fd --type f --hidden --follow --exclude .git'}), <bang>0)
 
 let ruby_operators        = 1
 let ruby_pseudo_operators = 1
-let g:airline_theme='google_dark'
+let g:airline_theme='base16_gruvbox_dark_hard'
 let g:airline_powerline_fonts = 1
-
+let NERDTreeShowHidden=1
 let g:fzf_buffers_jump = 1
 
 function! s:build_quickfix_list(lines)
@@ -179,10 +214,9 @@ set statusline+=\ %f
 set statusline+=%=
 set statusline+=\ %{LinterStatus()}
 
-nnoremap <C-Space> :Buffers<Cr>
+nnoremap <C-Space> :Buffers!<Cr>
 nnoremap <C-p> :Files!<Cr>
 nnoremap <C-f> :Ag!<Space>
-nnoremap <C-Space> :Buffers<Cr>
 nnoremap <C-c> :GV<Cr>
 nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":FZF\<cr>"
 nnoremap tn :tabnew<Space>
@@ -236,3 +270,18 @@ augroup fugitive_ext
   " Browse to the commit under my cursor
   autocmd FileType fugitiveblame nnoremap <buffer> <localleader>gb :execute ":.Gbrowse )<cr>
 augroup END
+
+
+function! GenerateTimestampFileName()
+    " Get the current date and time
+    let l:timestamp = strftime("%Y-%m-%d_%H-%M-%S")
+    " Define the file name with the timestamp
+    let l:filename = "file_" . l:timestamp . ".txt"
+    " Insert the file name into the current buffer
+    execute "normal! i" . l:filename
+endfunction
+
+" Map the function to a command or keybinding
+command! TimestampFileName call GenerateTimestampFileName()
+nnoremap <leader>tf :call GenerateTimestampFileName()<CR>
+hi NvimTreeNormal guibg=NONE ctermbg=NONE

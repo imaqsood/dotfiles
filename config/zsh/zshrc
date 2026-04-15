@@ -1,0 +1,266 @@
+# =============================================================================
+# zshrc — Zsh configuration
+# Managed by dotfiles: https://github.com/imaqsood/dotfiles
+# =============================================================================
+
+# -- Powerlevel10k instant prompt (must be near top) --------------------------
+# quiet: suppresses warnings and avoids garbled lines on terminal resize
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# -- Oh My Zsh ----------------------------------------------------------------
+export ZSH=$HOME/.oh-my-zsh
+export ZSH_THEME="powerlevel10k/powerlevel10k"
+plugins=(git tmux docker fzf ruby docker-compose)
+source $ZSH/oh-my-zsh.sh
+
+# -- Vi mode ------------------------------------------------------------------
+bindkey -v
+
+# -- Zsh plugins (direct source — ~900ms faster than zplug) -------------------
+# Plugins are pre-installed in ~/.zplug/repos/. To install new ones:
+#   git clone <repo-url> ~/.zplug/repos/<author>/<name>
+# NOTE: p10k and oh-my-zsh plugins are loaded above via ZSH_THEME + plugins=()
+export ZPLUG_HOME=$HOME/.zplug
+
+[[ -f $ZPLUG_HOME/repos/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && \
+  source $ZPLUG_HOME/repos/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+[[ -f $ZPLUG_HOME/repos/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh ]] && \
+  source $ZPLUG_HOME/repos/zsh-users/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+[[ -f $ZPLUG_HOME/repos/chrissicool/zsh-256color/zsh-256color.plugin.zsh ]] && \
+  source $ZPLUG_HOME/repos/chrissicool/zsh-256color/zsh-256color.plugin.zsh
+
+[[ -f $ZPLUG_HOME/repos/loiccoyle/zsh-github-copilot/zsh-github-copilot.plugin.zsh ]] && \
+  source $ZPLUG_HOME/repos/loiccoyle/zsh-github-copilot/zsh-github-copilot.plugin.zsh
+
+# syntax-highlighting must be sourced LAST (after all widgets are defined)
+[[ -f $ZPLUG_HOME/repos/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
+  source $ZPLUG_HOME/repos/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# -- FZF configuration -------------------------------------------------------
+export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+export FZF_DEFAULT_OPTS='--height 40% --tmux bottom,40% --layout reverse --border top'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type d --hidden --follow --exclude .git"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# -- GitHub Copilot keybindings -----------------------------------------------
+bindkey '»' zsh_gh_copilot_explain  # Option+Shift+\ to explain
+bindkey '«' zsh_gh_copilot_suggest  # Option+\ to suggest
+
+# -- Modern CLI aliases (next-gen replacements) --------------------------------
+if command -v eza &> /dev/null; then
+  alias l="eza --icons --git"
+  alias ls="eza --icons"
+  alias ll="eza -la --icons --git --header"
+  alias lt="eza --tree --icons --git --level=3"
+  alias la="eza -la --icons --git"
+elif command -v exa &> /dev/null; then
+  alias l="exa --icons --git"
+  alias ls="exa --icons"
+  alias ll="exa -la --icons --git"
+else
+  alias l="ls -lah"
+fi
+
+alias cat="bat --paging=never 2>/dev/null || cat"
+alias cop="git add -N .; git diff --name-only | xargs rubocop $@"
+
+# -- Git aliases ---------------------------------------------------------------
+alias gs="git status -sb"
+alias gd="git diff"
+alias gds="git diff --staged"
+alias gl="git log --oneline --graph --decorate -20"
+alias gsa="gstash"
+
+# -- Lazygit / Lazydocker shortcuts -------------------------------------------
+alias lg="lazygit"
+alias ldk="lazydocker"
+
+# -- Navigation (zoxide) ------------------------------------------------------
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
+# -- Shell history (atuin) ----------------------------------------------------
+if command -v atuin &> /dev/null; then
+  eval "$(atuin init zsh)"
+fi
+
+# -- Version manager (mise — replaces pyenv, rbenv, nvm, sdkman) --------------
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
+# -- Legacy version managers (loaded alongside mise until full migration) ------
+
+# rbenv (still managing your Ruby versions)
+if [[ -d $HOME/.rbenv ]]; then
+  eval "$(rbenv init - zsh)"
+fi
+
+# rvm
+if [[ -d $HOME/.rvm ]]; then
+  export PATH="$PATH:$HOME/.rvm/bin"
+  [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+fi
+
+# pyenv (lazy-loaded — saves ~575ms startup time)
+if [[ -d $HOME/.pyenv ]]; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+  export PATH="$PYENV_ROOT/shims:$PATH"
+  pyenv() { unset -f pyenv; eval "$(command pyenv init - zsh)"; pyenv "$@"; }
+fi
+
+# nvm (lazy-loaded — saves ~350ms startup time)
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  # Lazy load: create placeholder functions that load nvm on first use
+  nvm() { unset -f nvm node npm npx; \. "$NVM_DIR/nvm.sh"; [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"; nvm "$@"; }
+  node() { unset -f nvm node npm npx; \. "$NVM_DIR/nvm.sh"; node "$@"; }
+  npm() { unset -f nvm node npm npx; \. "$NVM_DIR/nvm.sh"; npm "$@"; }
+  npx() { unset -f nvm node npm npx; \. "$NVM_DIR/nvm.sh"; npx "$@"; }
+fi
+
+# sdkman (lazy-loaded — avoids network timeout on startup)
+export SDKMAN_DIR="$HOME/.sdkman"
+if [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
+  sdk() { unset -f sdk; source "$SDKMAN_DIR/bin/sdkman-init.sh"; sdk "$@"; }
+fi
+
+# -- GitHub Copilot CLI -------------------------------------------------------
+# Wrapped in braces to suppress all output (p10k instant prompt compatibility)
+if command -v gh &> /dev/null; then
+  if gh extension list 2>&1 | grep -q copilot 2>/dev/null; then
+    eval "$(gh copilot alias -- zsh 2>/dev/null)"
+  fi
+fi
+
+# -- Powerlevel10k config -----------------------------------------------------
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# -- PATH additions -----------------------------------------------------------
+# Homebrew (Apple Silicon)
+if [[ -d /opt/homebrew ]]; then
+  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+  export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+fi
+
+# Python (Homebrew)
+if command -v brew &> /dev/null; then
+  BREW_PYTHON="$(brew --prefix python 2>/dev/null)/libexec/bin"
+  [[ -d "$BREW_PYTHON" ]] && export PATH="$BREW_PYTHON:$PATH"
+fi
+
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/dev:$PATH"
+
+# LM Studio CLI
+[[ -d "$HOME/.lmstudio/bin" ]] && export PATH="$PATH:$HOME/.lmstudio/bin"
+
+# -- Environment variables ----------------------------------------------------
+export GIT_EDITOR=nvim
+export EDITOR=nvim
+export VISUAL=nvim
+
+export BUNDLE_PATH=.bundle/gem
+export BUNDLE_BIN=.bundle/bin
+
+# Source private env files (not in git)
+[[ ! -f ~/.env ]] || source ~/.env
+[[ -s "$HOME/.env-ccm" ]] && source "$HOME/.env-ccm"
+
+# -- Tmux sessions helper -----------------------------------------------------
+alias create_tmux_sessions='tmux has-session -t puppet 2>/dev/null || tmux new-session -d -s puppet -c ~/dev/puppet; \
+                            tmux has-session -t modules 2>/dev/null || tmux new-session -d -s module -c ~/dev/puppet/modules; \
+                            tmux has-session -t action 2>/dev/null || tmux new-session -d -s action -c ~/dev/action-project; \
+                            tmux has-session -t p4costy 2>/dev/null || { \
+                                tmux new-session -d -s p4costy; \
+                                tmux new-window -t p4costy:2 -n ccm-backend -c ~/dev/p4costy/ccm-backend; \
+                                tmux new-window -t p4costy:3 -n ccm-frontend -c ~/dev/p4costy/ccm-frontend; \
+                                tmux new-window -t p4costy:4 -n ccm-helm -c ~/dev/p4costy/ccm-helm; \
+                                tmux new-window -t p4costy:5 -n ccm-infra -c ~/dev/p4costy/ccm-infra; \
+                                tmux new-window -t p4costy:6 -n ccm-k8s-configs -c ~/dev/p4costy/ccm-k8s-configs; \
+                            }; \
+                            tmux has-session -t dev 2>/dev/null || tmux new-session -d -s dev -c ~/dev; \
+                            tmux attach'
+
+# -- Git stash fuzzy finder ----------------------------------------------------
+function gstash() {
+    local msg="$1"
+    local stashes=$(git stash list --format='%gd: %s')
+
+    if [[ -z "$msg" ]]; then
+      if command -v fzf &> /dev/null; then
+          local selected_stash=$(echo "$stashes" | fzf --prompt="Select stash to apply: ")
+          if [[ -n "$selected_stash" ]]; then
+              local stash_name=$(echo "$selected_stash" | awk -F: '{print $1}')
+              git stash apply "$stash_name"
+          else
+              echo "No stash selected."
+          fi
+          return 0
+      else
+          echo "Multiple stashes found, but fzf is not installed."
+          return 1
+      fi
+    fi
+
+    local exact_match=$(echo "$stashes" | grep -E "stash@\{\d+\}: On [^:]+: $msg$")
+    local match_count=$(echo "$exact_match" | sed '/^$/d' | wc -l | tr -d ' ')
+
+    if [[ "$match_count" -eq 1 ]]; then
+        local stash_name=$(echo "$exact_match" | awk -F: '{print $1}')
+        echo "Applying stash: $exact_match"
+        git stash apply "$stash_name"
+        return 0
+    fi
+
+    local matches=$(echo "$stashes" | grep -i "$msg")
+
+    if [[ -z "$matches" ]]; then
+        echo "No stash found matching: $msg"
+        return 1
+    fi
+
+    if [[ $(echo "$matches" | wc -l) -eq 1 ]]; then
+        echo "Found stash: $matches"
+        read -q "choice?Apply this stash? (y/n) "
+        echo
+        if [[ "$choice" =~ ^[Yy]$ ]]; then
+            local stash_name=$(echo "$matches" | awk -F: '{print $1}')
+            git stash apply "$stash_name"
+        else
+            echo "Operation canceled."
+        fi
+        return 0
+    fi
+
+    if command -v fzf &> /dev/null; then
+        local selected_stash=$(echo "$matches" | fzf --prompt="Select stash to apply: ")
+        if [[ -n "$selected_stash" ]]; then
+            local stash_name=$(echo "$selected_stash" | awk -F: '{print $1}')
+            git stash apply "$stash_name"
+        else
+            echo "No stash selected."
+        fi
+    else
+        echo "Multiple stashes found, but fzf is not installed."
+        return 1
+    fi
+}
+
+# -- Docker CLI completions ---------------------------------------------------
+# NOTE: fpath must be set BEFORE oh-my-zsh sources compinit.
+# Docker completions are handled by adding to fpath above oh-my-zsh,
+# or by running compinit only if it hasn't been loaded yet.
+if [[ -d "$HOME/.docker/completions" ]]; then
+  fpath=($HOME/.docker/completions $fpath)
+  # Only reload compinit if docker completions dir exists and compinit already ran
+  autoload -Uz compinit && compinit -C  # -C skips security check (fast)
+fi

@@ -14,6 +14,8 @@
 tmux_conf_new_session_prompt=false
 
 
+set -g mouse on
+
 # -- windows & pane creation ---------------------------------------------------
 
 # new window retains current path, possible values are:
@@ -67,24 +69,33 @@ tmux_conf_24b_colour=auto
 #   - tmux_conf_theme_synchronized
 tmux_conf_theme=enabled
 
-# default theme
-tmux_conf_theme_colour_1="#080808"    # dark gray
-tmux_conf_theme_colour_2="#303030"    # gray
-tmux_conf_theme_colour_3="#8a8a8a"    # light gray
-tmux_conf_theme_colour_4="#00afff"    # light blue
-tmux_conf_theme_colour_5="#ffff00"    # yellow
-tmux_conf_theme_colour_6="#080808"    # dark gray
-tmux_conf_theme_colour_7="#e4e4e4"    # white
-tmux_conf_theme_colour_8="#080808"    # dark gray
-tmux_conf_theme_colour_9="#ffff00"    # yellow
-tmux_conf_theme_colour_10="#ff00af"   # pink
-tmux_conf_theme_colour_11="#5fff00"   # green
-tmux_conf_theme_colour_12="#8a8a8a"   # light gray
-tmux_conf_theme_colour_13="#e4e4e4"   # white
-tmux_conf_theme_colour_14="#080808"   # dark gray
-tmux_conf_theme_colour_15="#080808"   # dark gray
-tmux_conf_theme_colour_16="#d70000"   # red
-tmux_conf_theme_colour_17="#e4e4e4"   # white
+# Gruvbox Dark theme (https://github.com/morhetz/gruvbox)
+#
+#   bg0_h   = #1d2021    bg0     = #282828    bg1     = #3c3836
+#   bg2     = #504945    bg3     = #665c54    bg4     = #7c6f64
+#   fg0     = #fbf1c7    fg1     = #ebdbb2    fg2     = #d5c4a1
+#   fg3     = #bdae93    fg4     = #a89984
+#   red     = #fb4934    green   = #b8bb26    yellow  = #fabd2f
+#   blue    = #83a598    purple  = #d3869b    aqua    = #8ec07c
+#   orange  = #fe8019
+#
+tmux_conf_theme_colour_1="#1d2021"    # bg0_h  — darkest bg (status bar bg)
+tmux_conf_theme_colour_2="#3c3836"    # bg1    — pane borders, focused bg
+tmux_conf_theme_colour_3="#a89984"    # fg4    — muted fg (inactive text)
+tmux_conf_theme_colour_4="#83a598"    # blue   — active accents (borders, current window)
+tmux_conf_theme_colour_5="#fabd2f"    # yellow — messages, modes, bells
+tmux_conf_theme_colour_6="#1d2021"    # bg0_h  — status left section 1 fg
+tmux_conf_theme_colour_7="#ebdbb2"    # fg1    — status left section 2 fg
+tmux_conf_theme_colour_8="#1d2021"    # bg0_h  — status left section 3 fg
+tmux_conf_theme_colour_9="#fe8019"    # orange — status left section 1 bg (session name)
+tmux_conf_theme_colour_10="#d3869b"   # purple — status left section 2 bg (uptime)
+tmux_conf_theme_colour_11="#b8bb26"   # green  — status left section 3 bg
+tmux_conf_theme_colour_12="#a89984"   # fg4    — status right section 1 fg
+tmux_conf_theme_colour_13="#ebdbb2"   # fg1    — status right section 2 fg
+tmux_conf_theme_colour_14="#1d2021"   # bg0_h  — status right section 3 fg
+tmux_conf_theme_colour_15="#3c3836"   # bg1    — status right section 1 bg
+tmux_conf_theme_colour_16="#504945"   # bg2    — status right section 2 bg
+tmux_conf_theme_colour_17="#8ec07c"   # aqua   — status right section 3 bg (hostname)
 
 # default theme (ansi)
 #tmux_conf_theme_colour_1="colour0"
@@ -210,19 +221,15 @@ tmux_conf_theme_window_status_bell_bg="default"
 tmux_conf_theme_window_status_bell_attr="blink,bold"
 
 # window last status style
-tmux_conf_theme_window_status_last_fg="$tmux_conf_theme_colour_4"
+tmux_conf_theme_window_status_last_fg="#8ec07c"
 tmux_conf_theme_window_status_last_bg="$tmux_conf_theme_colour_2"
 tmux_conf_theme_window_status_last_attr="none"
 
 # status left/right sections separators
-tmux_conf_theme_left_separator_main=""
-tmux_conf_theme_left_separator_sub="|"
-tmux_conf_theme_right_separator_main=""
-tmux_conf_theme_right_separator_sub="|"
-#tmux_conf_theme_left_separator_main='\uE0B0'  # /!\ you don't need to install Powerline
-#tmux_conf_theme_left_separator_sub='\uE0B1'   #   you only need fonts patched with
-#tmux_conf_theme_right_separator_main='\uE0B2' #   Powerline symbols or the standalone
-#tmux_conf_theme_right_separator_sub='\uE0B3'  #   PowerlineSymbols.otf font, see README.md
+tmux_conf_theme_left_separator_main='\uE0B0'
+tmux_conf_theme_left_separator_sub='\uE0B1'
+tmux_conf_theme_right_separator_main='\uE0B2'
+tmux_conf_theme_right_separator_sub='\uE0B3'
 
 # status left/right content:
 #   - separate main sections with "|"
