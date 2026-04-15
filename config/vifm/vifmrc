@@ -1,0 +1,8 @@
+
+set dotfiles
+
+colorscheme gruvbox
+
+" Open all files with nvim by default
+filetype * open /opt/homebrew/bin/nvim %f
+

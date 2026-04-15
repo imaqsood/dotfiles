@@ -1,0 +1,103 @@
+# =============================================================================
+# gitconfig — Git configuration with modern defaults
+# Managed by dotfiles: https://github.com/imaqsood/dotfiles
+# =============================================================================
+
+[user]
+	name = Maqsood Ahmad
+	email = maqsood.ulde@gmail.com
+
+[core]
+	editor = nvim
+	pager = delta
+	autocrlf = input
+	whitespace = fix
+
+[init]
+	defaultBranch = main
+
+# -- Delta (beautiful diffs) --------------------------------------------------
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = gruvbox-dark
+	dark = true
+	file-style = bold yellow ul
+	hunk-header-style = omit
+
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	colorMoved = default
+	algorithm = histogram
+
+# -- Aliases ------------------------------------------------------------------
+
+[alias]
+	# Short status
+	s = status -sb
+	# Pretty log
+	lg = log --oneline --graph --decorate --all
+	# Compact log with dates
+	ll = log --pretty=format:'%C(yellow)%h%Creset %C(green)%ad%Creset | %s%C(red)%d%Creset %C(blue)[%an]%Creset' --date=short
+	# Amend last commit (same message)
+	amend = commit --amend --no-edit
+	# Unstage files
+	unstage = reset HEAD --
+	# Show last commit
+	last = log -1 HEAD --stat
+	# List branches sorted by last modified
+	branches = for-each-ref --sort=-committerdate refs/heads/ --format='%(color:yellow)%(refname:short)%(color:reset) - %(color:green)%(committerdate:relative)%(color:reset) - %(contents:subject)'
+	# Quick stash
+	stash-all = stash save --include-untracked
+	# Delete merged branches
+	cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d"
+	# Word diff
+	wdiff = diff --word-diff
+
+# -- Colors -------------------------------------------------------------------
+
+[color]
+	ui = auto
+
+[color "branch"]
+	current = yellow bold
+	local = green
+	remote = cyan
+
+[color "status"]
+	added = green
+	changed = yellow
+	untracked = red
+
+# -- Push / Pull defaults -----------------------------------------------------
+
+[push]
+	default = current
+	autoSetupRemote = true
+	followTags = true
+
+[pull]
+	rebase = true
+
+[fetch]
+	prune = true
+	prunetags = true
+
+[rebase]
+	autosquash = true
+	autostash = true
+
+# -- URL shortcuts ------------------------------------------------------------
+
+[url "git@github.com:"]
+	insteadOf = "gh:"
+
+[url "git@bitbucket.org:"]
+	insteadOf = "bb:"
