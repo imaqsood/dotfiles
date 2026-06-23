@@ -372,11 +372,13 @@ require("lazy").setup({
         -- Custom components
         local function lsp_clients()
           local clients = vim.lsp.get_clients({ bufnr = 0 })
-          if #clients == 0 then return "" end
           local names = {}
           for _, client in ipairs(clients) do
-            table.insert(names, client.name)
+            if client.name ~= "copilot" then       -- shown by its own indicator
+              table.insert(names, client.name)
+            end
           end
+          if #names == 0 then return "" end
           return " " .. table.concat(names, ", ")
         end
 
@@ -507,8 +509,8 @@ require("lazy").setup({
               { lsp_clients, color = { fg = "#8ec07c" } },        -- aqua LSP names
               {
                 function()
-                  local ok, status = pcall(vim.api.nvim_call_function, "copilot#Enabled", {})
-                  if ok and status == 1 then return " " end
+                  local ok, clients = pcall(vim.lsp.get_clients, { name = "copilot" })
+                  if ok and clients and #clients > 0 then return " " end
                   return ""
                 end,
                 color = { fg = "#8ec07c" },
@@ -626,6 +628,7 @@ require("lazy").setup({
         "L3MON4D3/LuaSnip",
         "saadparwaiz1/cmp_luasnip",
         "rafamadriz/friendly-snippets",
+        "zbirenbaum/copilot-cmp",
       },
       config = function()
         local cmp = require("cmp")
@@ -663,6 +666,7 @@ require("lazy").setup({
             ["<C-e>"] = cmp.mapping.abort(),
           }),
           sources = cmp.config.sources({
+            { name = "copilot" },
             { name = "nvim_lsp" },
             { name = "luasnip" },
           }, {
@@ -739,10 +743,74 @@ require("lazy").setup({
       end,
     },
 
-    -- ===================== GitHub Copilot =====================
+    -- ===================== GitHub Copilot (copilot.lua) =====================
+    -- Inline suggestions disabled — completions flow through nvim-cmp via
+    -- copilot-cmp instead, so they share one menu and the <Tab> mapping.
     {
-      "github/copilot.vim",
+      "zbirenbaum/copilot.lua",
+      cmd = "Copilot",
       event = "InsertEnter",
+      config = function()
+        require("copilot").setup({
+          suggestion = { enabled = false },
+          panel = { enabled = false },
+        })
+      end,
+    },
+    {
+      "zbirenbaum/copilot-cmp",
+      dependencies = { "zbirenbaum/copilot.lua" },
+      config = function()
+        require("copilot_cmp").setup()
+      end,
+    },
+
+    -- ===================== Claude Code (CLI in a terminal split) =============
+    -- Runs the `claude` binary in a split, inheriting CLAUDE_CONFIG_DIR from the
+    -- shell — so whichever account `claude-use` selected is the one used here.
+    -- Toggle: <leader>cc (or <C-,>). Continue/resume previous conversations too.
+    {
+      "greggh/claude-code.nvim",
+      dependencies = { "nvim-lua/plenary.nvim" },
+      cmd = { "ClaudeCode", "ClaudeCodeContinue", "ClaudeCodeResume" },
+      keys = {
+        { "<leader>cc", "<cmd>ClaudeCode<CR>",         desc = "Toggle Claude Code" },
+        { "<leader>cC", "<cmd>ClaudeCodeContinue<CR>", desc = "Claude Code: continue last" },
+        { "<leader>cr", "<cmd>ClaudeCodeResume<CR>",   desc = "Claude Code: resume picker" },
+      },
+      config = function()
+        require("claude-code").setup({
+          window = {
+            split_ratio = 0.35,
+            position = "botright",
+            enter_insert = true,
+          },
+        })
+      end,
+    },
+
+    -- ===================== CodeCompanion (inline AI via Copilot) =============
+    -- Quick in-buffer chat + inline edits using the existing Copilot
+    -- subscription (no API key). Complements claude-code.nvim: this is for
+    -- fast asks without leaving the buffer; that is for full agentic sessions.
+    {
+      "olimorris/codecompanion.nvim",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        "nvim-treesitter/nvim-treesitter",
+      },
+      cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
+      keys = {
+        { "<leader>ai", "<cmd>CodeCompanionChat Toggle<CR>", desc = "AI chat (CodeCompanion)", mode = { "n", "v" } },
+        { "<leader>aa", "<cmd>CodeCompanionActions<CR>",     desc = "AI action palette",       mode = { "n", "v" } },
+        { "<leader>ae", "<cmd>CodeCompanion<CR>",            desc = "AI inline edit",          mode = { "n", "v" } },
+      },
+      opts = {
+        interactions = {
+          chat   = { adapter = "copilot" },
+          inline = { adapter = "copilot" },
+        },
+      },
     },
 
     -- ===================== Which Key (shows available keybindings) =====================
