@@ -4,6 +4,9 @@ Portable, shared Claude Code configuration carried across machines and across
 both accounts (work enterprise + personal free). Everything here is symlinked
 into each account's config dir by [`bin/setup-claude.sh`](../bin/setup-claude.sh).
 
+> For the full AI workflow (Neovim, tmux, worktrees, shortcuts), see
+> [docs/ai-workflow.md](../docs/ai-workflow.md).
+
 ## What's tracked
 
 | Path             | Purpose                                              |
