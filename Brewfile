@@ -12,6 +12,7 @@ tap "homebrew/services"
 brew "git"
 brew "zsh"
 brew "tmux"
+brew "sesh"                        # smart tmux session manager (prefix + T)
 brew "neovim"
 brew "curl"
 brew "wget"

@@ -394,6 +394,19 @@ tmux_conf_copy_to_os_clipboard=false
 # move status line to top
 #set -g status-position top
 
+# -- AI: Claude Code ----------------------------------------------------------
+# Both inherit CLAUDE_CONFIG_DIR from your shell, so they use whichever account
+# `claude-use` selected. Run through an interactive zsh so PATH/env are set.
+#   prefix + C : Claude in a split beside the current pane
+#   prefix + A : Claude in a floating popup (closes when claude exits)
+bind C split-window -h -c "#{pane_current_path}" "exec zsh -ic claude"
+bind A display-popup -E -w 90% -h 85% -d "#{pane_current_path}" "exec zsh -ic claude"
+
+# -- sesh: smart session/worktree switcher (prefix + T) -----------------------
+# Requires `sesh` + `fzf` (see Brewfile). Lists sessions, dirs, and zoxide
+# results; pick one to jump/create a session. Great for per-worktree sessions.
+bind T display-popup -E -w 62% -h 62% -d "#{pane_current_path}" 'sesh connect "$(sesh list | fzf --reverse --border-label=" sesh " --prompt="⚡ ")"'
+
 
 # -- tpm -----------------------------------------------------------------------
 
@@ -432,9 +445,18 @@ tmux_conf_uninstall_plugins_on_reload=true
 # visit https://github.com/tmux-plugins for available plugins
 #set -g @plugin 'tmux-plugins/tmux-copycat'
 #set -g @plugin 'tmux-plugins/tmux-cpu'
-#set -g @plugin 'tmux-plugins/tmux-resurrect'
-#set -g @plugin 'tmux-plugins/tmux-continuum'
-#set -g @continuum-restore 'on'
+
+# persist & auto-restore sessions across reboots (keeps AI panes/layouts).
+#   save: prefix + Ctrl-s   restore: prefix + Ctrl-r   (auto-restore on launch)
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @continuum-restore 'on'
+set -g @resurrect-capture-pane-contents 'on'
+
+# extrakto: fuzzy-grab any text on screen (paths, hashes, URLs) to feed prompts.
+#   prefix + o   (rebound off the default Tab, which gpakosz uses for last-window)
+set -g @plugin 'laktak/extrakto'
+set -g @extrakto_key 'o'
 
 
 # -- custom variables ----------------------------------------------------------
