@@ -170,6 +170,71 @@ claude-use() {
   echo "claude account: $acct  ($CLAUDE_CONFIG_DIR)"
 }
 
+# -- git worktree + tmux session helper ---------------------------------------
+# Run parallel Claude sessions, one per task, each in its own worktree+session.
+#   gwt <branch> [base]  create/reuse a worktree for <branch> (off base, default
+#                        HEAD) and open a tmux/sesh session rooted there
+#   gwt                  fzf-pick an existing worktree and jump to it
+#   gwt-rm <branch>      remove a worktree and prune
+# Worktrees live under $WORKTREE_HOME/<repo>/<branch> (default ~/dev/worktrees).
+export WORKTREE_HOME="${WORKTREE_HOME:-$HOME/dev/worktrees}"
+
+_gwt_session() {
+  local dir="$1" name
+  name=$(basename "$dir" | tr '.:' '__')
+  if command -v sesh &> /dev/null && [[ -n "$TMUX" ]]; then
+    sesh connect "$dir"
+  elif command -v tmux &> /dev/null && [[ -n "$TMUX" ]]; then
+    tmux new-session -d -s "$name" -c "$dir" 2>/dev/null
+    tmux switch-client -t "$name"
+  elif command -v tmux &> /dev/null; then
+    tmux new-session -A -s "$name" -c "$dir"
+  else
+    cd "$dir"
+  fi
+}
+
+# Repo name from the *common* git dir, so it's stable whether you're in the
+# main checkout or inside a worktree.
+_gwt_repo() {
+  local common; common=$(git rev-parse --git-common-dir 2>/dev/null) || return 1
+  [[ "$common" = /* ]] || common="$PWD/$common"
+  echo "${${common:h}:t}"
+}
+
+gwt() {
+  local repo; repo=$(_gwt_repo) || { echo "gwt: not in a git repo" >&2; return 1; }
+
+  if [[ -z "$1" ]]; then
+    command -v fzf &> /dev/null || { echo "gwt: need a branch arg (or fzf)" >&2; return 1; }
+    local sel; sel=$(git worktree list | fzf --reverse --prompt="worktree ") || return
+    _gwt_session "${sel%% *}"
+    return
+  fi
+
+  local branch="$1" base="${2:-HEAD}"
+  local dir="$WORKTREE_HOME/$repo/${branch//\//-}"
+  if [[ ! -d "$dir" ]]; then
+    mkdir -p "${dir:h}"
+    if git show-ref --verify --quiet "refs/heads/$branch"; then
+      git worktree add "$dir" "$branch" || return
+    else
+      git worktree add -b "$branch" "$dir" "$base" || return
+    fi
+  fi
+  _gwt_session "$dir"
+}
+
+gwt-rm() {
+  [[ -z "$1" ]] && { echo "usage: gwt-rm <branch>" >&2; return 1; }
+  # Find the worktree dir registered for this branch (robust from anywhere).
+  local dir; dir=$(git worktree list --porcelain 2>/dev/null \
+    | awk -v b="refs/heads/$1" '/^worktree /{w=substr($0,10)} /^branch /{if($2==b){print w; exit}}')
+  [[ -z "$dir" ]] && { echo "gwt-rm: no worktree for branch '$1'" >&2; return 1; }
+  git worktree remove "$dir" && echo "removed worktree: $1 ($dir)"
+  git worktree prune
+}
+
 # -- Powerlevel10k config -----------------------------------------------------
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
