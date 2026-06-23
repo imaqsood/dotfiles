@@ -218,8 +218,78 @@ require("lazy").setup({
     -- ===================== Fuzzy Finder (fzf.vim replacement) =====================
     {
       "nvim-telescope/telescope.nvim",
-      tag = "0.1.8",
       dependencies = { "nvim-lua/plenary.nvim" },
+      config = function()
+        local actions = require("telescope.actions")
+        require("telescope").setup({
+          defaults = {
+            vimgrep_arguments = {
+              "rg", "--color=never", "--no-heading", "--with-filename",
+              "--line-number", "--column", "--smart-case",
+              "--fixed-strings",  -- treat pattern as literal (so { } work)
+            },
+
+            -- Fullscreen layout: use 99% of screen, wide preview showing lots of code
+            layout_strategy = "flex",                 -- horizontal on wide terms, vertical on narrow
+            layout_config = {
+              width = 0.99,                            -- 99% of screen width
+              height = 0.97,                           -- 97% of screen height
+              preview_cutoff = 20,                     -- always show preview unless tiny
+              prompt_position = "top",
+              horizontal = {
+                preview_width = 0.65,                  -- 65% of window = preview (more code)
+              },
+              vertical = {
+                preview_height = 0.7,                  -- 70% preview when stacked
+                mirror = false,
+              },
+              flex = {
+                flip_columns = 140,                    -- switch to vertical below 140 cols
+              },
+            },
+
+            sorting_strategy = "ascending",            -- results grow top-down (pairs w/ prompt_position=top)
+            path_display = { "truncate" },             -- shorten long paths
+            dynamic_preview_title = true,
+            preview = {
+              filesize_limit = 1,                      -- don't preview files > 1MB
+              timeout = 250,
+            },
+            border = true,
+            borderchars = {
+              "─", "│", "─", "│", "┌", "┐", "┘", "└",  -- clean box borders
+            },
+
+            -- ESC closes directly in insert mode (no need for double-tap)
+            mappings = {
+              i = {
+                ["<Esc>"] = actions.close,
+                ["<C-u>"] = false,                     -- let <C-u> clear the prompt instead
+                ["<C-j>"] = actions.move_selection_next,
+                ["<C-k>"] = actions.move_selection_previous,
+              },
+            },
+          },
+          pickers = {
+            find_files = {
+              hidden = true,                           -- show dotfiles
+              find_command = {
+                "fd", "--type", "f", "--hidden",
+                "--exclude", ".git",
+                "--exclude", "node_modules",
+                "--exclude", ".bundle",
+                "--exclude", "target",
+              },
+            },
+            buffers = {
+              sort_lastused = true,
+              mappings = {
+                i = { ["<C-d>"] = actions.delete_buffer },
+              },
+            },
+          },
+        })
+      end,
     },
 
     -- ===================== Syntax Highlighting =====================
@@ -333,6 +403,16 @@ require("lazy").setup({
           end
         end
 
+        -- Current mode's section-a bg color (used to tint the rounded outer caps)
+        local function mode_bg()
+          local map = {
+            n = "#fe8019", i = "#b8bb26", v = "#d3869b", V = "#d3869b", [""] = "#d3869b",
+            c = "#fabd2f", R = "#fb4934", t = "#8ec07c", s = "#d3869b", S = "#d3869b",
+          }
+          return map[vim.fn.mode()] or "#fe8019"
+        end
+        local statusline_bg = "#1d2021"  -- matches tmux bar bg / gruvbox bg0_h
+
         -- Gruvbox Powerline theme — matches tmux bar exactly
         -- tmux left:  orange(#fe8019) > purple(#d3869b) > green(#b8bb26)
         -- tmux right: bg1(#3c3836) < bg2(#504945) < aqua(#8ec07c)
@@ -387,6 +467,12 @@ require("lazy").setup({
           },
           sections = {
             lualine_a = {
+              {
+                function() return "\u{e0b6}" end,                    --  rounded left cap "("
+                color = function() return { fg = mode_bg(), bg = statusline_bg } end,
+                padding = 0,
+                separator = { right = "" },                          -- no powerline arrow between cap and mode
+              },
               { "mode", fmt = function(s) return s:sub(1, 3) end },  -- NOR / INS / VIS / CMD
             },
             lualine_b = {
@@ -441,6 +527,12 @@ require("lazy").setup({
             },
             lualine_z = {
               { "location", fmt = function(s) return " " .. s:gsub("%s+", "") end },
+              {
+                function() return "\u{e0b4}" end,                    --  rounded right cap ")"
+                color = function() return { fg = mode_bg(), bg = statusline_bg } end,
+                padding = 0,
+                separator = { left = "" },                           -- no powerline arrow between location and cap
+              },
             },
           },
           inactive_sections = {
@@ -678,6 +770,79 @@ require("lazy").setup({
     -- ===================== Puppet =====================
     { "rodjek/vim-puppet", ft = "puppet" },
 
+    -- ===================== Markdown — In-editor rendering =====================
+    -- Renders headers, code blocks, tables, checkboxes, callouts, etc. beautifully
+    -- INSIDE the buffer. No browser needed. Toggle with :RenderMarkdown
+    {
+      "MeanderingProgrammer/render-markdown.nvim",
+      ft = { "markdown", "Avante" },
+      dependencies = {
+        "nvim-treesitter/nvim-treesitter",
+        "nvim-tree/nvim-web-devicons",
+      },
+      opts = {
+        completions = { lsp = { enabled = true } },
+        heading = {
+          icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
+          backgrounds = {
+            "RenderMarkdownH1Bg", "RenderMarkdownH2Bg", "RenderMarkdownH3Bg",
+            "RenderMarkdownH4Bg", "RenderMarkdownH5Bg", "RenderMarkdownH6Bg",
+          },
+          foregrounds = {
+            "RenderMarkdownH1", "RenderMarkdownH2", "RenderMarkdownH3",
+            "RenderMarkdownH4", "RenderMarkdownH5", "RenderMarkdownH6",
+          },
+        },
+        code = {
+          sign = false,
+          width = "block",
+          right_pad = 1,
+          border = "thick",
+        },
+        bullet = { icons = { "●", "○", "◆", "◇" } },
+        checkbox = {
+          unchecked = { icon = "󰄱 " },
+          checked   = { icon = "󰱒 " },
+          custom = {
+            todo  = { raw = "[-]", rendered = "󰥔 ", highlight = "RenderMarkdownTodo" },
+            wip   = { raw = "[/]", rendered = "󰦖 ", highlight = "RenderMarkdownTodo" },
+          },
+        },
+        pipe_table = { preset = "round", style = "full" },
+      },
+    },
+
+    -- ===================== Markdown — Browser preview =====================
+    -- Live preview in browser with sync scroll. Supports mermaid, math (KaTeX),
+    -- charts, etc. Toggle with :MarkdownPreview / :MarkdownPreviewStop
+    {
+      "iamcco/markdown-preview.nvim",
+      cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+      ft = { "markdown" },
+      -- Use the install script directly (avoids needing Node/yarn since nvm is lazy-loaded)
+      build = "cd app && bash install.sh",
+      config = function()
+        vim.g.mkdp_auto_close = 1                 -- close preview when switching away
+        vim.g.mkdp_open_to_the_world = 0          -- localhost only
+        vim.g.mkdp_browser = ""                   -- system default browser
+        vim.g.mkdp_echo_preview_url = 1
+        vim.g.mkdp_theme = "dark"                 -- match Gruvbox dark
+        vim.g.mkdp_preview_options = {
+          mkit = {},
+          katex = {},                             -- math support
+          uml = {},
+          maid = {},                              -- mermaid diagrams
+          disable_sync_scroll = 0,
+          sync_scroll_type = "middle",
+          hide_yaml_meta = 1,
+          sequence_diagrams = {},
+          flowchart_diagrams = {},
+          content_editable = false,
+          disable_filename = 0,
+        }
+      end,
+    },
+
   },
 
   install = { colorscheme = { "gruvbox" } },
@@ -707,6 +872,10 @@ map("n", "<leader>fb", builtin.buffers,                     { desc = "Buffers" }
 map("n", "<leader>fh", builtin.help_tags,                   { desc = "Help tags" })
 map("n", "<leader>gc", builtin.git_commits,                 { desc = "Git commits" })
 map("n", "<leader>gs", builtin.git_status,                  { desc = "Git status" })
+
+-- ---- Markdown preview ----
+map("n", "<leader>mp", ":MarkdownPreviewToggle<CR>",   { desc = "Markdown preview (browser)", silent = true })
+map("n", "<leader>mr", ":RenderMarkdown toggle<CR>",   { desc = "Toggle in-editor markdown rendering", silent = true })
 
 -- ---- Tab Navigation (from your vimrc_v1) ----
 map("n", "tn", ":tabnew<Space>",   { desc = "New tab" })

@@ -92,9 +92,9 @@ if command -v atuin &> /dev/null; then
 fi
 
 # -- Version manager (mise — replaces pyenv, rbenv, nvm, sdkman) --------------
-if command -v mise &> /dev/null; then
-  eval "$(mise activate zsh)"
-fi
+#if command -v mise &> /dev/null; then
+#  eval "$(mise activate zsh)"
+#fi
 
 # -- Legacy version managers (loaded alongside mise until full migration) ------
 

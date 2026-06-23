@@ -231,6 +231,17 @@ tmux_conf_theme_left_separator_sub='\uE0B1'
 tmux_conf_theme_right_separator_main='\uE0B2'
 tmux_conf_theme_right_separator_sub='\uE0B3'
 
+# status line outer caps (custom - not part of upstream gpakosz theme)
+#   - prefix is drawn before status-left (leftmost edge)
+#   - suffix is drawn after status-right (rightmost edge)
+#   - _fg defaults to the first status-left bg / last status-right bg (so the
+#     cap looks like a rounded extension of the adjacent section)
+#   - leave the glyph empty to disable
+tmux_conf_theme_status_left_prefix='\uE0B6'   #   rounded left cap, looks like (
+tmux_conf_theme_status_right_suffix='\uE0B4'  #   rounded right cap, looks like )
+#tmux_conf_theme_status_left_prefix_fg=
+#tmux_conf_theme_status_right_suffix_fg=
+
 # status left/right content:
 #   - separate main sections with "|"
 #   - separate subsections with ","
@@ -258,7 +269,7 @@ tmux_conf_theme_right_separator_sub='\uE0B3'
 #     - #{uptime_s}
 #     - #{username}
 #     - #{username_ssh}
-tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
+tmux_conf_theme_status_left="❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
 tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
 
 # status left style

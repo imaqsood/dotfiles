@@ -72,6 +72,8 @@ create_directories() {
   local dirs=(
     "$HOME/.config/nvim"
     "$HOME/.config/wezterm"
+    "$HOME/.config/ghostty"
+    "$HOME/.config/alacritty"
     "$HOME/.config/starship"
     "$HOME/.ssh"
     "$HOME/.vifm"
@@ -92,20 +94,20 @@ create_symlink() {
   local src="$1"
   local dest="$2"
 
-  # Ensure source file exists
-  if [ ! -f "$src" ]; then
+  # Ensure source exists (file or directory)
+  if [ ! -e "$src" ]; then
     log_warn "Source not found, skipping: $src"
     return
   fi
 
-  # Ensure destination directory exists
+  # Ensure destination's parent directory exists
   mkdir -p "$(dirname "$dest")"
 
-  # Backup existing file (if it's a real file, not already a symlink)
-  if [ -f "$dest" ] && [ ! -L "$dest" ]; then
+  # Backup existing path (real file or directory, not a symlink)
+  if [ ! -L "$dest" ] && [ -e "$dest" ]; then
     local backup="${dest}.backup.$(date +%Y%m%d%H%M%S)"
     mv "$dest" "$backup"
-    log_warn "Backed up existing file: $dest -> $backup"
+    log_warn "Backed up existing path: $dest -> $backup"
   fi
 
   # Remove existing symlink if it points somewhere else
@@ -128,6 +130,8 @@ setup_symlinks() {
   create_symlink "$dotfiles_dir/config/tmux/tmux.conf.local"   "$HOME/.tmux.conf.local"
   create_symlink "$dotfiles_dir/config/nvim/init.lua"          "$HOME/.config/nvim/init.lua"
   create_symlink "$dotfiles_dir/config/wezterm/wezterm.lua"    "$HOME/.config/wezterm/wezterm.lua"
+  create_symlink "$dotfiles_dir/config/ghostty/config"         "$HOME/.config/ghostty/config"
+  create_symlink "$dotfiles_dir/config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
   create_symlink "$dotfiles_dir/config/git/gitconfig"          "$HOME/.gitconfig"
   create_symlink "$dotfiles_dir/config/starship/starship.toml" "$HOME/.config/starship.toml"
   create_symlink "$dotfiles_dir/config/ssh/config"             "$HOME/.ssh/config"
@@ -135,6 +139,10 @@ setup_symlinks() {
   create_symlink "$dotfiles_dir/config/vifm/vifmrc"            "$HOME/.vifm/vifmrc"
   create_symlink "$dotfiles_dir/config/shell/inputrc"          "$HOME/.inputrc"
   create_symlink "$dotfiles_dir/config/shell/editrc"           "$HOME/.editrc"
+
+  # Claude Code: custom slash commands and subagents
+  create_symlink "$dotfiles_dir/.claude/commands"              "$HOME/.claude/commands"
+  create_symlink "$dotfiles_dir/.claude/agents"                "$HOME/.claude/agents"
 
   # tmux base config (from gpakosz/.tmux clone)
   if [ -f "$HOME/.tmux/.tmux.conf" ]; then

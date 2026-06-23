@@ -1,13 +1,17 @@
+Host *.puppetlabs.net *.puppet.net
+        User root
+        PubkeyAcceptedKeyTypes=+ssh-rsa
+        HostKeyAlgorithms=+ssh-rsa
+        IdentityFile ~/.ssh/jenkins
+        StrictHostKeyChecking no
+        UserKnownHostsFile /dev/null -i
+        PreferredAuthentications publickey
+        ServerAliveInterval 60
+        ForwardAgent yes
 Host github.com
         HostName github.com
         User git
-        IdentityFile ~/.ssh/git
-        IdentitiesOnly yes
-
-Host bitbucket.com
-        HostName bitbucket.com
-        User git
-        IdentityFile ~/.ssh/git
+        IdentityFile ~/.ssh/id_ed25519_perforce
         IdentitiesOnly yes
 Host *
         IdentityFile ~/.ssh/id_rsa
