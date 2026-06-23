@@ -202,6 +202,10 @@ _gwt_repo() {
   echo "${${common:h}:t}"
 }
 
+# oh-my-zsh's git plugin aliases `gwt` to `git worktree`; drop it so we can
+# define our richer helper (zsh can't define a function over an existing alias).
+unalias gwt 2>/dev/null
+
 gwt() {
   local repo; repo=$(_gwt_repo) || { echo "gwt: not in a git repo" >&2; return 1; }
 
