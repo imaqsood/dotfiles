@@ -9,6 +9,19 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- Silence ONE known-benign deprecation: nvim-lspconfig and the unmaintained
+-- copilot-cmp still call `client.is_stopped()` (dot) instead of the new
+-- `client:is_stopped()` method on Neovim 0.12+. Functionality is fine; this is
+-- just noise. Scoped to that single message so real deprecations still surface.
+-- Remove once both plugins migrate (or if copilot-cmp is dropped).
+do
+  local orig_deprecate = vim.deprecate
+  vim.deprecate = function(name, ...)
+    if type(name) == "string" and name:find("is_stopped", 1, true) then return end
+    return orig_deprecate(name, ...)
+  end
+end
+
 local opt = vim.opt
 opt.number         = true           -- line numbers
 opt.relativenumber = false           -- relative line numbers
