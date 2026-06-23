@@ -140,9 +140,10 @@ setup_symlinks() {
   create_symlink "$dotfiles_dir/config/shell/inputrc"          "$HOME/.inputrc"
   create_symlink "$dotfiles_dir/config/shell/editrc"           "$HOME/.editrc"
 
-  # Claude Code: custom slash commands and subagents
-  create_symlink "$dotfiles_dir/.claude/commands"              "$HOME/.claude/commands"
-  create_symlink "$dotfiles_dir/.claude/agents"                "$HOME/.claude/agents"
+  # Claude Code: shared config (CLAUDE.md, settings, agents, commands, skills)
+  # linked into every account dir. See bin/setup-claude.sh.
+  source "$dotfiles_dir/bin/setup-claude.sh"
+  setup_claude
 
   # tmux base config (from gpakosz/.tmux clone)
   if [ -f "$HOME/.tmux/.tmux.conf" ]; then

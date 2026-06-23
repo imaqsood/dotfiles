@@ -23,7 +23,13 @@ Brewfile.lock.json
 # Old scripts (kept for reference during migration)
 install/_old_*
 
-# Claude Code — ignore runtime state, version only commands/ and agents/
+# Claude Code — ignore runtime state & secrets, version only shared config.
+# Runtime/state never committed: credentials, projects/, sessions/, history,
+# .claude.json, statsig/, telemetry/, settings.local.json, etc.
 .claude/*
-!.claude/commands/
+!.claude/CLAUDE.md
+!.claude/README.md
+!.claude/settings.json
 !.claude/agents/
+!.claude/commands/
+!.claude/skills/

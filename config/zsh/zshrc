@@ -141,6 +141,35 @@ if command -v gh &> /dev/null; then
   fi
 fi
 
+# -- Claude Code account switcher ---------------------------------------------
+# Two accounts share one machine via separate config dirs (each keeps its own
+# credentials/history/projects); shared config is symlinked in by
+# bin/setup-claude.sh. Default is "work". Persist a choice with `claude-use -s`.
+export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+[[ -f "$HOME/.config/claude-account" ]] && \
+  export CLAUDE_CONFIG_DIR="$(<"$HOME/.config/claude-account")"
+
+claude-use() {
+  local persist=0 acct=""
+  [[ "$1" == "-s" || "$1" == "--save" ]] && { persist=1; shift; }
+  acct="$1"
+  case "$acct" in
+    work)     export CLAUDE_CONFIG_DIR="$HOME/.claude" ;;
+    personal) export CLAUDE_CONFIG_DIR="$HOME/.claude-personal" ;;
+    ""|status)
+      local cur="work"
+      [[ "$CLAUDE_CONFIG_DIR" == "$HOME/.claude-personal" ]] && cur="personal"
+      echo "claude account: $cur  ($CLAUDE_CONFIG_DIR)"
+      return 0 ;;
+    *) echo "usage: claude-use [-s] work|personal|status" >&2; return 1 ;;
+  esac
+  if (( persist )); then
+    mkdir -p "$HOME/.config"
+    print -r -- "$CLAUDE_CONFIG_DIR" > "$HOME/.config/claude-account"
+  fi
+  echo "claude account: $acct  ($CLAUDE_CONFIG_DIR)"
+}
+
 # -- Powerlevel10k config -----------------------------------------------------
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
